@@ -11,9 +11,53 @@ export const fetchNewArrivals = async () => {
   }
 };
 
-export const fetchBestSeller = async () => {
+const handleFinalizeCheckout = async (checkoutId) => {
   try {
-    const res = await axios.get(`${baseUrl}/v1/products/best-seller`);
+    const res = await axios.post(
+      `${baseUrl}/v1/checkout/${checkoutId}/finalize`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      },
+    );
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const handlePaymentSuccess = async (details, checkoutId) => {
+  try {
+    const res = await axios.put(
+      `${baseUrl}/v1/checkout/${checkoutId}/pay`,
+      { paymentStatus: "paid", paymentDetails: details },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        },
+      },
+    );
+
+    if (res.status === 200) await handleFinalizeCheckout(checkoutId);
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const handleUpload = async (formData) => {
+  try {
+    const res = await axios.post(`${baseUrl}/v1/upload`, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
     return res.data;
   } catch (error) {
     console.log(error);

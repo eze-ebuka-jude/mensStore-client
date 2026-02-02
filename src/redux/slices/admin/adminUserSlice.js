@@ -26,7 +26,7 @@ export const createUser = createAsyncThunk(
   "admin/createUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${baseUrl}/v1/admin/users`, {
+      const res = await axios.post(`${baseUrl}/v1/admin/users`, userData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
@@ -54,7 +54,7 @@ export const updateUser = createAsyncThunk(
         }
       );
 
-      return res.data;
+      return res.data.user;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }

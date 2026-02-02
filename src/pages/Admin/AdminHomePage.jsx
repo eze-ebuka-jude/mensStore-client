@@ -1,41 +1,65 @@
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchAdminProducts } from "../../redux/slices/admin/adminProductSlice";
+import { fetchAdminOrders } from "../../redux/slices/admin/adminOrderSlice";
 
 const AdminHomePage = () => {
-  const orders = [
-    {
-      _id: 12334,
-      user: {
-        name: "Jude Doe",
-      },
-      totalPrice: 110,
-      status: "Processing",
-    },
-  ];
+  const dispatch = useDispatch();
+  const {
+    adminProducts,
+    loading: productsLoading,
+    error: productsError,
+  } = useSelector((state) => state.adminProduct);
+  const {
+    adminOrders,
+    totalSales,
+    totalOrders,
+    loading: ordersLoading,
+    error: ordersError,
+  } = useSelector((state) => state.adminOrder);
+
+  useEffect(() => {
+    dispatch(fetchAdminProducts());
+    dispatch(fetchAdminOrders());
+  }, [dispatch]);
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="p-4 shadow-md rounded-lg">
-          <h2 className="text-xl font-semibold">Revenue</h2>
-          <p className="text-2xl">$10000</p>
-        </div>
+      {productsLoading || ordersLoading ? (
+        <p>Loading...</p>
+      ) : productsError ? (
+        <p className="text-red-500">Error fetching products: {productsError}</p>
+      ) : ordersError ? (
+        <p className="text-red-500">Error fetching orders: {ordersError}</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="p-4 shadow-md rounded-lg">
+            <h2 className="text-xl font-semibold">Revenue</h2>
+            <p className="text-2xl">${totalSales && totalSales.toFixed(2)}</p>
+          </div>
 
-        <div className="p-4 shadow-md rounded-lg">
-          <h2 className="text-xl font-semibold">Total Orders</h2>
-          <p className="text-2xl">200</p>
-          <Link to="/admin/orders" className="text-blue-500 hover:underline">
-            Manage Orders
-          </Link>
-        </div>
+          <div className="p-4 shadow-md rounded-lg">
+            <h2 className="text-xl font-semibold">Total Orders</h2>
+            <p className="text-2xl">{totalOrders}</p>
+            <Link to="/admin/orders" className="text-blue-500 hover:underline">
+              Manage Orders
+            </Link>
+          </div>
 
-        <div className="p-4 shadow-md rounded-lg">
-          <h2 className="text-xl font-semibold">Total Products</h2>
-          <p className="text-2xl">100</p>
-          <Link to="/admin/products" className="text-blue-500 hover:underline">
-            Manage Products
-          </Link>
+          <div className="p-4 shadow-md rounded-lg">
+            <h2 className="text-xl font-semibold">Total Products</h2>
+            <p className="text-2xl">{adminProducts.length}</p>
+            <Link
+              to="/admin/products"
+              className="text-blue-500 hover:underline"
+            >
+              Manage Products
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mt-6">
         <h2 className="text-2xl font-bold mb-4">Recent Orders</h2>
@@ -50,15 +74,15 @@ const AdminHomePage = () => {
               </tr>
             </thead>
             <tbody>
-              {orders.length > 0 ? (
-                orders.map((order) => (
+              {adminOrders.length > 0 ? (
+                adminOrders.map((order) => (
                   <tr
                     key={order._id}
                     className="border-b hover:bg-gray-50 cursor-pointer"
                   >
                     <td className="p-4">{order._id}</td>
                     <td className="p-4">{order.user.name}</td>
-                    <td className="p-4">{order.totalPrice}</td>
+                    <td className="p-4">${order.totalPrice.toFixed(2)}</td>
                     <td className="p-4">{order.status}</td>
                   </tr>
                 ))

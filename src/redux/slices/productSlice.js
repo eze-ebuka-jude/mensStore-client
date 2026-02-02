@@ -37,7 +37,7 @@ export const fetchProductsByFilters = createAsyncThunk(
 
     const res = await axios.get(`${baseUrl}/v1/products?${query.toString()}`);
     return res.data;
-  }
+  },
 );
 
 //Async Thunk to get a single product by ID
@@ -46,30 +46,30 @@ export const fetchProductById = createAsyncThunk(
   async (id) => {
     const res = await axios.get(`${baseUrl}/v1/products/${id}`);
     return res.data;
-  }
+  },
 );
 
 //Async Thunk to update product
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
   async ({ id, productData }) => {
-    const res = await axios.get(`${baseUrl}/v1/products/${id}`, productData, {
+    const res = await axios.put(`${baseUrl}/v1/products/${id}`, productData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("userToken")}`,
       },
     });
 
     return res.data;
-  }
+  },
 );
 
 //Async Thunk to fetch similar products
 export const fetchSimilarProducts = createAsyncThunk(
   "products/fetchSimilar",
-  async (id) => {
+  async ({ id }) => {
     const res = await axios.get(`${baseUrl}/v1/products/similar/${id}`);
     return res.data;
-  }
+  },
 );
 
 const productsSlice = createSlice({
@@ -149,7 +149,7 @@ const productsSlice = createSlice({
         state.loading = false;
         const updatedProduct = action.payload;
         const index = state.products.findIndex(
-          (product) => product._id === updateProduct._id
+          (product) => product._id === updateProduct._id,
         );
         if (index !== -1) state.products[index] = updatedProduct;
       })

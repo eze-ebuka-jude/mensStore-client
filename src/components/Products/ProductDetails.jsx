@@ -39,8 +39,8 @@ const ProductDetails = ({ productId }) => {
 
   useEffect(() => {
     const handleSetImg = () => {
-      if (selectedProduct?.images?.length > 0) {
-        setMainImage(selectedProduct.images[0].url);
+      if (selectedProduct?.data?.images?.length > 0) {
+        setMainImage(selectedProduct?.data?.images[0].url);
       }
     };
 
@@ -85,7 +85,7 @@ const ProductDetails = ({ productId }) => {
         <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg">
           <div className="flex flex-col md:flex-row">
             <div className="hidden md:flex flex-col space-y-4 mr-6">
-              {selectedProduct.images.map((img, index) => (
+              {selectedProduct?.data?.images.map((img, index) => (
                 <img
                   src={img.url}
                   alt={img.altText || `Thumbnail ${index}`}
@@ -109,7 +109,7 @@ const ProductDetails = ({ productId }) => {
             </div>
 
             <div className="md:hidden flex overscroll-x-scroll space-x-4 mb-4">
-              {selectedProduct.images.map((img, index) => (
+              {selectedProduct?.data?.images.map((img, index) => (
                 <img
                   src={img.url}
                   alt={img.altText || `Thumbnail ${index}`}
@@ -124,22 +124,23 @@ const ProductDetails = ({ productId }) => {
 
             <div className="md:w-1/2 md:ml-10">
               <h1 className="text-2xl md:text-3xl font-semibold mb-2">
-                {selectedProduct.name}
+                {selectedProduct?.data.name}
               </h1>
               <p className="text-lg text-gray-600 mb-1 line-through">
-                {selectedProduct.originalPrice && selectedProduct.originalPrice}
+                {selectedProduct?.data.originalPrice &&
+                  selectedProduct?.data.originalPrice}
               </p>
               <p className="text-xl text-gray-500 mb-2">
-                $ {selectedProduct.price}
+                $ {selectedProduct?.data.price}
               </p>
               <p className="text-gray-600 mb-4">
-                {selectedProduct.description}
+                {selectedProduct?.data.description}
               </p>
 
               <div className="mb-4">
                 <p className="text-gray-700">Color:</p>
                 <div className="flex gap-2 mt-2">
-                  {selectedProduct.colors.map((color) => (
+                  {selectedProduct?.data.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
@@ -160,7 +161,7 @@ const ProductDetails = ({ productId }) => {
               <div className="mb-4">
                 <p className="text-gray-700">Size:</p>
                 <div className="flex gap-2 mt-2">
-                  {selectedProduct.sizes.map((size) => (
+                  {selectedProduct?.data.sizes.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
@@ -211,11 +212,11 @@ const ProductDetails = ({ productId }) => {
                   <tbody>
                     <tr>
                       <td className="py-1">Brand</td>
-                      <td className="py-1">{selectedProduct.brand}</td>
+                      <td className="py-1">{selectedProduct?.data.brand}</td>
                     </tr>
                     <tr>
                       <td className="py-1">Material</td>
-                      <td className="py-1">{selectedProduct.material}</td>
+                      <td className="py-1">{selectedProduct?.data.material}</td>
                     </tr>
                   </tbody>
                 </table>

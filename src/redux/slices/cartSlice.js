@@ -86,12 +86,14 @@ export const removeItemFromCart = createAsyncThunk(
   ) => {
     try {
       const res = await axios.delete(`${baseUrl}/v1/cart`, {
-        productId,
-        quantity,
-        size,
-        color,
-        guestId,
-        userId,
+        data: {
+          productId,
+          quantity,
+          size,
+          color,
+          guestId,
+          userId,
+        },
       });
 
       return res.data;

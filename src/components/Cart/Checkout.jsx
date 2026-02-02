@@ -1,29 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StripeButton from "./StripeButton";
-
-const cart = {
-  products: [
-    {
-      name: "Stylish Jacket",
-      size: "M",
-      color: "Black",
-      price: 120,
-      image: "https://picsum.photos/150?random=1",
-    },
-    {
-      name: "Casual Sneakers",
-      size: "42",
-      color: "White",
-      price: 75,
-      image: "https://picsum.photos/150?random=2",
-    },
-  ],
-  totalPrice: 195,
-};
+import { useDispatch, useSelector } from "react-redux";
+import { createCheckout } from "../../redux/slices/checkoutSlice";
+import { handlePaymentSuccess } from "../../services/api";
 
 const Checkout = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { cart, loading, error } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
+
   const [checkoutId, setCheckoutId] = useState(null);
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
@@ -35,15 +22,42 @@ const Checkout = () => {
     phone: "",
   });
 
-  const handleCreateCheckout = (e) => {
+  useEffect(() => {
+    if (!cart || !cart.products || cart.products.length === 0) navigate("/");
+  }, [cart, navigate]);
+
+  const handleCreateCheckout = async (e) => {
     e.preventDefault();
-    setCheckoutId("jjdjdjjdjdjjdj");
+    if (cart && cart.products.length > 0) {
+      const res = await dispatch(
+        createCheckout({
+          checkoutItems: cart.products,
+          shippingAddress,
+          paymentMethod: "Stripe",
+          totalPrice: cart.totalPrice,
+        })
+      );
+
+      if (res.payload && res.payload._id) setCheckoutId(res.payload._id);
+
+      window.location.href = res.payload.url;
+
+      await handlePaymentSuccess(
+        {
+          transactionId: res.payload.stripeCheckoutId,
+          paymentGateway: "Stripe",
+          amount: res.payload.newCheckout?.totalPrice,
+          currency: "USD",
+        },
+        res.payload?.newCheckout._id
+      );
+    }
   };
 
-  // const handlePaymentSuccess = (details) => {
-  //   console.log("Payment Successful", details);
-  //   navigate('/order-confirmation')
-  // };
+  if (loading) return <p>Loading cart...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!cart || !cart.products || cart.products.length === 0)
+    return <p>Your Cart is empty!!</p>;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-10 px-6 tracking-tighter">
@@ -55,7 +69,7 @@ const Checkout = () => {
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
-              value="user@example.com"
+              value={user ? user?.email : ""}
               className="w-full p-2 border rounded"
               disabled
             />
@@ -177,7 +191,15 @@ const Checkout = () => {
           </div>
 
           <div className="mt-6">
-            {!checkoutId ? (
+            {!checkoutId && (
+              <button
+                type="submit"
+                className="w-full bg-black text-white py-3 rounded cursor-pointer"
+              >
+                Continue to Payment
+              </button>
+            )}
+            {/* {!checkoutId ? (
               <button
                 type="submit"
                 className="w-full bg-black text-white py-3 rounded cursor-pointer"
@@ -188,12 +210,15 @@ const Checkout = () => {
               <div>
                 <h3 className="text-lg mb-4">Pay with Stripe</h3>
                 <StripeButton
-                // amount={100}
-                // onSuccess={handlePaymentSuccess}
-                // onError={(e) => alert("Payment failed. Try again!", e)}
+                  checkoutId={checkoutId}
+                  amount={cart.totalPrice}
+                  handleFinalizeCheckout={handleFinalizeCheckout}
+                  // amount={100}
+                  // onSuccess={handlePaymentSuccess}
+                  // onError={(e) => alert("Payment failed. Try again!", e)}
                 />
               </div>
-            )}
+            )} */}
           </div>
         </form>
       </div>

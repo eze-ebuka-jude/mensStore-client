@@ -20,6 +20,8 @@ import EditProduct from "./components/Admin/EditProduct";
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import StripeSuccessPage from "./pages/StripeSuccessPage";
+import ProtectedRoute from "./components/Common/ProtectedRoute";
 
 const App = () => {
   return (
@@ -40,6 +42,7 @@ const App = () => {
             />
             <Route path="product/:id" element={<ProductDetails />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="success" element={<StripeSuccessPage />} />
             <Route
               path="order-confirmation"
               element={<OrderConfirmationPage />}
@@ -47,7 +50,14 @@ const App = () => {
             <Route path="order/:id" element={<OrderDetailsPage />} />
             <Route path="my-orders" element={<MyOrdersPage />} />
           </Route>
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<AdminHomePage />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="products" element={<ProductManagement />} />
