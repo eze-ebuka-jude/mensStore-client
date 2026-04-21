@@ -35,12 +35,10 @@ const Checkout = () => {
           shippingAddress,
           paymentMethod: "Stripe",
           totalPrice: cart.totalPrice,
-        })
+        }),
       );
 
       if (res.payload && res.payload._id) setCheckoutId(res.payload._id);
-
-      window.location.href = res.payload.url;
 
       await handlePaymentSuccess(
         {
@@ -49,8 +47,10 @@ const Checkout = () => {
           amount: res.payload.newCheckout?.totalPrice,
           currency: "USD",
         },
-        res.payload?.newCheckout._id
+        res.payload?.newCheckout._id,
       );
+
+      if (res.payload) window.location.href = res.payload.url;
     }
   };
 

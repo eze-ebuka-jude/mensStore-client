@@ -19,7 +19,7 @@ export const createCheckout = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 const checkoutSlice = createSlice({
@@ -38,7 +38,6 @@ const checkoutSlice = createSlice({
       })
       .addCase(createCheckout.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload.newCheckout);
         state.checkout = action.payload.newCheckout;
       })
       .addCase(createCheckout.rejected, (state, action) => {

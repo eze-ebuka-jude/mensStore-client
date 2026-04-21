@@ -19,7 +19,7 @@ const CartContents = ({ cart, userId, guestId }) => {
           userId,
           size,
           color,
-        })
+        }),
       );
     }
   };
@@ -56,14 +56,16 @@ const CartContents = ({ cart, userId, guestId }) => {
                       -1,
                       prod.quantity,
                       prod.size,
-                      prod.color
+                      prod.color,
                     )
                   }
                   className="border rounded px-2 py-1 text-xl font-medium cursor-pointer"
                 >
                   -
                 </button>
-                <span className="mx-4">{prod.quantity}</span>
+                <span className="mx-4">
+                  {prod.quantity ? prod.quantity : "updating..."}
+                </span>
                 <button
                   onClick={() =>
                     handleAddToCart(
@@ -71,7 +73,7 @@ const CartContents = ({ cart, userId, guestId }) => {
                       1,
                       prod.quantity,
                       prod.size,
-                      prod.color
+                      prod.color,
                     )
                   }
                   className="border rounded px-2 py-1 text-xl font-medium cursor-pointer"
